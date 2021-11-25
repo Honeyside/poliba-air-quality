@@ -48,9 +48,12 @@ if (config.arduinoEnabled) {
 }
 
 const express = require('express');
+const cors = require('cors');
 const moment = require('moment');
 
 const app = new express();
+
+app.use(cors());
 
 app.get('/api/data', (req, res) => {
     connection.query("SELECT * FROM air_quality LIMIT 100", function (error, results, fields) {

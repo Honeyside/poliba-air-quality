@@ -1,5 +1,9 @@
+require('colors');
 const mysql = require('mysql');
 const config = require('./config');
+
+console.log('');
+console.log('poliba air quality'.cyan);
 
 const connection = mysql.createConnection({
     host: "db-mysql-ams3-61819-do-user-10314580-0.b.db.ondigitalocean.com",
@@ -28,7 +32,7 @@ if (config.arduinoEnabled) {
     const parser = port.pipe(new Readline({delimiter: '\n'}));
 // Read the port data
     port.on("open", () => {
-        console.log('connected to arduino');
+        console.log('connected to arduino'.green);
     });
     parser.on('data', data => {
         if (data && typeof data === 'string') {
@@ -40,7 +44,7 @@ if (config.arduinoEnabled) {
         }
     });
 } else {
-    console.log('arduino disabled, will not try to connect');
+    console.log('arduino disabled, will not try to connect'.yellow);
 }
 
 const express = require('express');
@@ -76,5 +80,5 @@ app.get('/api/hourly', (req, res) => {
 });
 
 app.listen(80, () => {
-    console.log('listening on port 80');
+    console.log('listening on port 80'.green);
 });

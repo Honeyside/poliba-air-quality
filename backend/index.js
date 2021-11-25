@@ -1,4 +1,5 @@
 const mysql = require('mysql');
+const config = require('./config');
 
 const connection = mysql.createConnection({
     host: "db-mysql-ams3-61819-do-user-10314580-0.b.db.ondigitalocean.com",
@@ -20,23 +21,27 @@ const insert = (data) => {
     })
 }
 
-const SerialPort = require('serialport');
-const Readline = require('@serialport/parser-readline');
-const port = new SerialPort('COM3', {baudRate: 9600});
-const parser = port.pipe(new Readline({delimiter: '\n'}));
+if (config.arduinoEnabled) {
+    const SerialPort = require('serialport');
+    const Readline = require('@serialport/parser-readline');
+    const port = new SerialPort('COM3', {baudRate: 9600});
+    const parser = port.pipe(new Readline({delimiter: '\n'}));
 // Read the port data
-port.on("open", () => {
-    console.log('connected to arduino');
-});
-parser.on('data', data => {
-    if (data && typeof data === 'string') {
-        const temperature = data.split(' : ')[1];
-        console.log('temperature: ' + temperature);
-        if (temperature) {
-            insert({value: temperature, source: 'arduino_com3'});
+    port.on("open", () => {
+        console.log('connected to arduino');
+    });
+    parser.on('data', data => {
+        if (data && typeof data === 'string') {
+            const temperature = data.split(' : ')[1];
+            console.log('temperature: ' + temperature);
+            if (temperature) {
+                insert({value: temperature, source: 'arduino_com3'});
+            }
         }
-    }
-});
+    });
+} else {
+    console.log('arduino disabled, will not try to connect');
+}
 
 const express = require('express');
 const moment = require('moment');
